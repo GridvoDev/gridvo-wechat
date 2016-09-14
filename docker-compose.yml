@@ -5,6 +5,8 @@ services:
     image: gridvo-wechat:latest
     depends_on:
      - mongodb
+    links:
+     - mongodb
   mongodb:
     image: mongo:latest
   unittest:
@@ -13,7 +15,9 @@ services:
      - gridvo-wechat
     depends_on:
      - mongodb
+    links:
+     - mongodb
     working_dir: /home/gridvo-wechat
     entrypoint:
-     - node
-     - -v
+     - npm
+     - test
