@@ -1,0 +1,19 @@
+﻿version: '2'
+services:
+  gridvo-wechat:
+    build: .
+    image: gridvo-wechat:latest
+    depends_on:
+     - mongodb
+  mongodb:
+    image: mongo:latest
+  unittest:
+    image: node:latest
+    volumes_from:
+     - gridvo-wechat
+    depends_on:
+     - mongodb
+    working_dir: /home/gridvo-wechat
+    entrypoint:
+     - node
+     - -v

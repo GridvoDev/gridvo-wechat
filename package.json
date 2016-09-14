@@ -1,0 +1,21 @@
+{
+  "name": "gridvo-wechat",
+  "version": "0.0.1",
+  "author": {
+    "name": "linmadan",
+    "email": "772181827@qq.com"
+  },
+  "devDependencies": {
+    "mocha": "^2.5.3",
+    "muk": "^0.5.2",
+    "should": "^9.0.2"
+  },
+  "dependencies": {
+    "async": "^2.0.0-rc.6",
+    "bearcat": "^0.4.29",
+    "mongodb": "^2.1.18",
+    "request": "^2.73.0",
+    "underscore": "^1.8.3",
+    "express": "^4.13.4"
+  }
+}
