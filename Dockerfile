@@ -6,6 +6,7 @@ RUN ["npm","install"]
 COPY ./app.js app.js
 COPY ./lib lib
 COPY ./test test
+COPY ./unittest_bcontext.json unittest_bcontext.json
 VOLUME ["/home/gridvo-wechat"]
 ENTRYPOINT ["node"]
 CMD ["app.js"]

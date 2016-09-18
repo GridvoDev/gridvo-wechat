@@ -1,23 +1,27 @@
 ﻿version: '2'
 services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
   gridvo-wechat:
     build: .
     image: gridvo-wechat:latest
+    container_name: gridvo-wechat
     depends_on:
      - mongodb
-    links:
-     - mongodb
-  mongodb:
-    image: mongo:latest
+    environment:
+      MONGODB_SERVICE_HOST: mongodb
+      MONGODB_SERVICE_PORT: 27017
   unittest:
     image: node:latest
+    container_name: unittest
     volumes_from:
      - gridvo-wechat
     depends_on:
      - mongodb
-    links:
-     - mongodb
+     - gridvo-wechat
+    environment:
+      MONGODB_SERVICE_HOST: mongodb
+      MONGODB_SERVICE_PORT: 27017
     working_dir: /home/gridvo-wechat
-    entrypoint:
-     - npm
-     - test
+    command: npm test

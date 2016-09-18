@@ -5,14 +5,14 @@ var _ = require('underscore');
 var should = require('should');
 var SuiteTicket = require('../../../lib/domain/suiteTicket');
 
-console.log(process.env);
 describe('suite ticket repository MongoDB use case test', function () {
     var Repository;
-    before(function () {
+    before(function (done) {
         var contextPath = require.resolve('../../../unittest_bcontext.json');
         bearcat.createApp([contextPath]);
         bearcat.start(function () {
             Repository = bearcat.getBean('suiteTicketRepository');
+            done();
         });
     });
     describe('#saveSuiteTicket(suiteTicket, cb)', function () {
@@ -30,12 +30,31 @@ describe('suite ticket repository MongoDB use case test', function () {
             });
         });
     });
+    describe('#getSuiteTicket(suiteID, cb)', function () {
+        context('get a suite ticket for suite id', function () {
+            it('should return null if no this suite ticket', function (done) {
+                var suiteID = "noSuiteID";
+                Repository.getSuiteTicket(suiteID, function (err, suiteTicket) {
+                    _.isNull(suiteTicket).should.be.eql(true);
+                    done();
+                });
+            });
+            it('should return suite ticket', function (done) {
+                var suiteID = "suiteID";
+                Repository.getSuiteTicket(suiteID, function (err, suiteTicket) {
+                    suiteTicket.suiteID.should.be.eql("suiteID");
+                    suiteTicket.ticket.should.be.eql("Ticket");
+                    done();
+                });
+            });
+        });
+    });
     after(function (done) {
-        MongoClient.connect("mongodb://:27017/TestWeChat", function (err, db) {
+        MongoClient.connect(`mongodb://${process.env.MONGODB_SERVICE_HOST}:${process.env.MONGODB_SERVICE_PORT}/Wechat`, function (err, db) {
             if (err) {
                 return;
             }
-            db.collection('suiteTicket').drop(function (err, response) {
+            db.collection('SuiteTicket').drop(function (err, response) {
                 db.close();
                 done();
             });
