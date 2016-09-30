@@ -5,13 +5,14 @@ services:
     container_name: mongodb
   gridvo-wechat:
     build: .
-    image: gridvo-wechat:latest
+    image: gridvo-wechat:dev
     container_name: gridvo-wechat
     depends_on:
      - mongodb
     environment:
       MONGODB_SERVICE_HOST: mongodb
       MONGODB_SERVICE_PORT: 27017
+      IS_CI: 1
   unittest:
     image: node:latest
     container_name: unittest

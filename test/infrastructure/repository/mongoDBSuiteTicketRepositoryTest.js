@@ -1,19 +1,18 @@
 'use strict';
 var MongoClient = require('mongodb').MongoClient;
-var bearcat = require('bearcat');
 var _ = require('underscore');
 var should = require('should');
 var SuiteTicket = require('../../../lib/domain/suiteTicket');
+var mongoDBSuiteTicketRepository = require('../../../lib/infrastructure/repository/mongoDBSuiteTicketRepository');
 
 describe('suite ticket repository MongoDB use case test', function () {
     var Repository;
-    before(function (done) {
-        var contextPath = require.resolve('../../../unittest_bcontext.json');
-        bearcat.createApp([contextPath]);
-        bearcat.start(function () {
-            Repository = bearcat.getBean('suiteTicketRepository');
-            done();
-        });
+    before(function () {
+        if (!process.env.IS_CI) {
+            process.env.MONGODB_SERVICE_HOST = "127.0.0.1";
+            process.env.MONGODB_SERVICE_PORT = "27017";
+        }
+        Repository = new mongoDBSuiteTicketRepository();
     });
     describe('#saveSuiteTicket(suiteTicket, cb)', function () {
         context('save a suite ticket', function () {
@@ -56,6 +55,10 @@ describe('suite ticket repository MongoDB use case test', function () {
             }
             db.collection('SuiteTicket').drop(function (err, response) {
                 db.close();
+                if (!process.env.IS_CI) {
+                    delete process.env.MONGODB_SERVICE_HOST;
+                    delete process.env.MONGODB_SERVICE_PORT;
+                }
                 done();
             });
         });

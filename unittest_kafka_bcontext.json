@@ -1,0 +1,10 @@
+{
+  "name": "gridvo-wechat-unittest-di",
+  "scan": "lib",
+  "beans": [
+    {
+      "id": "suiteTicketRepository",
+      "func": "lib.infrastructure.repository.mongoDBSuiteTicketRepository"
+    }
+  ]
+}

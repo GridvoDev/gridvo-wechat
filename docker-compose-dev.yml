@@ -1,0 +1,16 @@
+﻿version: '2'
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+     - "127.0.0.1:27017:27017"
+  kafka:
+    image: spotify/kafka
+    container_name: kafka
+    ports:
+      - "127.0.0.1:2181:2181"
+      - "127.0.0.1:9092:9092"
+    environment:
+      ADVERTISED_HOST: 127.0.0.1
+      ADVERTISED_PORT: 9092
