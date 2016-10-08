@@ -5,12 +5,19 @@ services:
     container_name: mongodb
     ports:
      - "127.0.0.1:27017:27017"
-  kafka:
-    image: spotify/kafka
-    container_name: kafka
+  zookeeper:
+    image: wurstmeister/zookeeper
     ports:
       - "127.0.0.1:2181:2181"
+  kafka:
+    image: wurstmeister/kafka
+    ports:
       - "127.0.0.1:9092:9092"
+      - "127.0.0.1:9093:9093"
+    depends_on:
+      - zookeeper
     environment:
-      ADVERTISED_HOST: 127.0.0.1
-      ADVERTISED_PORT: 9092
+      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
