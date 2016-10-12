@@ -3,40 +3,42 @@ var kafka = require('kafka-node');
 var _ = require('underscore');
 var should = require('should');
 var muk = require('muk');
-var SuiteTicketArriveTopicConsumer = require('../../../lib/kafka/consumer/suiteTicketArriveTopicConsumer');
+var bearcat = require('bearcat');
 
 describe('suite ticket arrive topic consumer use case test', function () {
     var consumer;
     var producer;
     var producerClient;
     before(function (done) {
-        if (!process.env.IS_CI) {
-            process.env.ZOOKEEPER_SERVICE_HOST = "127.0.0.1";
-            process.env.ZOOKEEPER_SERVICE_PORT = "2181";
-        }
-        var Producer = kafka.Producer;
-        producerClient = new kafka.Client(`${process.env.ZOOKEEPER_SERVICE_HOST}:${process.env.ZOOKEEPER_SERVICE_PORT}`);
-        producer = new Producer(producerClient);
-        producer.on('ready', function () {
-            producer.createTopics(['suite-ticket-arrive'], true, (err, data)=> {
-                producerClient.refreshMetadata(['suite-ticket-arrive'], ()=> {
-                    done();
+        var contextPath = require.resolve('../../../unittest_kafka_bcontext.json');
+        bearcat.createApp([contextPath]);
+        bearcat.start(function () {
+            var ZOOKEEPER_SERVICE_HOST = process.env.ZOOKEEPER_SERVICE_HOST ? process.env.ZOOKEEPER_SERVICE_HOST : "127.0.0.1";
+            var ZOOKEEPER_SERVICE_PORT = process.env.ZOOKEEPER_SERVICE_PORT ? process.env.ZOOKEEPER_SERVICE_PORT : "2181";
+            var Producer = kafka.Producer;
+            producerClient = new kafka.Client(`${ZOOKEEPER_SERVICE_HOST}:${ZOOKEEPER_SERVICE_PORT}`);
+            producer = new Producer(producerClient);
+            producer.on('ready', function () {
+                producer.createTopics(['suite-ticket-arrive'], true, (err, data)=> {
+                    producerClient.refreshMetadata(['suite-ticket-arrive'], ()=> {
+                        done();
+                    });
                 });
             });
+            producer.on('error', (err)=> {
+                done(err);
+            });
+            consumer = bearcat.getBean('suiteTicketArriveTopicConsumer');
         });
-        producer.on('error', (err)=> {
-            done(err);
-        });
-        consumer = new SuiteTicketArriveTopicConsumer();
     });
-    describe('#startConsume()', function () {
+    describe('#startConsume(callback)', function () {
         context('start consume suite-ticket-arrive topic', function () {
             it('should call suiteAccessTokenService.updateSuiteTicket methods when consumer this topic', function (done) {
                 var mockSuiteAccessTokenService = {};
                 mockSuiteAccessTokenService.updateSuiteTicket = ()=> {
                     done();
                 };
-                muk(consumer, "suiteAccessTokenService", mockSuiteAccessTokenService);
+                muk(consumer, "__suiteAccessTokenService__", mockSuiteAccessTokenService);
                 consumer.startConsume();
                 var suiteTicketData = {
                     suiteID: "suiteID",
@@ -52,10 +54,6 @@ describe('suite ticket arrive topic consumer use case test', function () {
         });
     });
     after(function (done) {
-        if (!process.env.IS_CI) {
-            delete process.env.ZOOKEEPER_SERVICE_HOST;
-            delete process.env.ZOOKEEPER_SERVICE_PORT;
-        }
         consumer.stopConsume();
         producer.close();
         producerClient.close(()=> {

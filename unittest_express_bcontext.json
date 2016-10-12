@@ -1,10 +1,10 @@
 {
-  "name": "gridvo-wechat-unittest-di",
+  "name": "gridvo-wechat-unittest-express-di",
   "scan": "lib",
   "beans": [
     {
-      "id": "suiteTicketRepository",
-      "func": "lib.infrastructure.repository.mongoDBSuiteTicketRepository"
+      "id": "",
+      "func": ""
     }
   ]
 }

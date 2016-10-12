@@ -12,7 +12,6 @@ services:
     environment:
       MONGODB_SERVICE_HOST: mongodb
       MONGODB_SERVICE_PORT: 27017
-      IS_CI: 1
   unittest:
     image: node:latest
     container_name: unittest

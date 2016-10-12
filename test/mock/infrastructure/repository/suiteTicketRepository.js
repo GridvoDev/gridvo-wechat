@@ -8,7 +8,7 @@ Repository.prototype.saveSuiteTicket = function (suiteTicket, callback) {
     callback(null, true);
 };
 
-Repository.prototype.getSuiteTicket = function (suiteID, callback) {
+Repository.prototype.getSuiteTicketBySuiteID = function (suiteID, callback) {
     callback(null, new SuiteTicket({
         suiteID: "suiteID",
         ticket: "Ticket"

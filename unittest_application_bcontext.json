@@ -4,7 +4,17 @@
   "beans": [
     {
       "id": "suiteAccessTokenService",
-      "func": "test.mock.application.service.suiteAccessTokenService"
+      "func": "lib.application.service.suiteAccessTokenService",
+      "props": [
+        {
+          "name": "__suiteTicketRepository__",
+          "ref": "mockSuiteTicketRepository"
+        }
+      ]
+    },
+    {
+      "id": "mockSuiteTicketRepository",
+      "func": "test.mock.infrastructure.repository.suiteTicketRepository"
     }
   ]
 }

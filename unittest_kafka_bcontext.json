@@ -1,10 +1,20 @@
 {
-  "name": "gridvo-wechat-unittest-di",
+  "name": "gridvo-wechat-unittest-kafka-di",
   "scan": "lib",
   "beans": [
     {
-      "id": "suiteTicketRepository",
-      "func": "lib.infrastructure.repository.mongoDBSuiteTicketRepository"
+      "id": "suiteTicketArriveTopicConsumer",
+      "func": "lib.kafka.consumer.suiteTicketArriveTopicConsumer",
+      "props": [
+        {
+          "name": "__suiteAccessTokenService__",
+          "ref": "mockSuiteAccessTokenService"
+        }
+      ]
+    },
+    {
+      "id": "mockSuiteAccessTokenService",
+      "func": "test.mock.application.service.suiteAccessTokenService"
     }
   ]
 }

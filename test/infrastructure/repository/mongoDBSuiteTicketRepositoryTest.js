@@ -8,10 +8,6 @@ var mongoDBSuiteTicketRepository = require('../../../lib/infrastructure/reposito
 describe('suite ticket repository MongoDB use case test', function () {
     var Repository;
     before(function () {
-        if (!process.env.IS_CI) {
-            process.env.MONGODB_SERVICE_HOST = "127.0.0.1";
-            process.env.MONGODB_SERVICE_PORT = "27017";
-        }
         Repository = new mongoDBSuiteTicketRepository();
     });
     describe('#saveSuiteTicket(suiteTicket, cb)', function () {
@@ -29,18 +25,18 @@ describe('suite ticket repository MongoDB use case test', function () {
             });
         });
     });
-    describe('#getSuiteTicket(suiteID, cb)', function () {
+    describe('#getSuiteTicketBySuiteID(suiteID, cb)', function () {
         context('get a suite ticket for suite id', function () {
             it('should return null if no this suite ticket', function (done) {
                 var suiteID = "noSuiteID";
-                Repository.getSuiteTicket(suiteID, function (err, suiteTicket) {
+                Repository.getSuiteTicketBySuiteID(suiteID, function (err, suiteTicket) {
                     _.isNull(suiteTicket).should.be.eql(true);
                     done();
                 });
             });
             it('should return suite ticket', function (done) {
                 var suiteID = "suiteID";
-                Repository.getSuiteTicket(suiteID, function (err, suiteTicket) {
+                Repository.getSuiteTicketBySuiteID(suiteID, function (err, suiteTicket) {
                     suiteTicket.suiteID.should.be.eql("suiteID");
                     suiteTicket.ticket.should.be.eql("Ticket");
                     done();
@@ -49,16 +45,14 @@ describe('suite ticket repository MongoDB use case test', function () {
         });
     });
     after(function (done) {
-        MongoClient.connect(`mongodb://${process.env.MONGODB_SERVICE_HOST}:${process.env.MONGODB_SERVICE_PORT}/Wechat`, function (err, db) {
+        var MONGODB_SERVICE_HOST = process.env.MONGODB_SERVICE_HOST ? process.env.MONGODB_SERVICE_HOST : "127.0.0.1";
+        var MONGODB_SERVICE_PORT = process.env.MONGODB_SERVICE_PORT ? process.env.MONGODB_SERVICE_PORT : "27017";
+        MongoClient.connect(`mongodb://${MONGODB_SERVICE_HOST}:${MONGODB_SERVICE_PORT}/Wechat`, function (err, db) {
             if (err) {
                 return;
             }
             db.collection('SuiteTicket').drop(function (err, response) {
                 db.close();
-                if (!process.env.IS_CI) {
-                    delete process.env.MONGODB_SERVICE_HOST;
-                    delete process.env.MONGODB_SERVICE_PORT;
-                }
                 done();
             });
         });
