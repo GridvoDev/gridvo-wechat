@@ -8,11 +8,13 @@
   "devDependencies": {
     "mocha": "^2.5.3",
     "muk": "^0.5.2",
-    "should": "^9.0.2"
+    "should": "^9.0.2",
+    "supertest": "^2.0.0"
   },
   "dependencies": {
     "async": "^2.0.0-rc.6",
     "bearcat": "^0.4.29",
+    "body-parser": "^1.15.2",
     "express": "^4.13.4",
     "kafka-node": "^0.5.8",
     "mongodb": "^2.1.18",

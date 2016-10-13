@@ -9,12 +9,34 @@
         {
           "name": "__suiteTicketRepository__",
           "ref": "mockSuiteTicketRepository"
+        },
+        {
+          "name": "__suiteAccessTokenRepository__",
+          "ref": "mockSuiteAccessTokenRepository"
+        }
+      ]
+    },
+    {
+      "id": "corpAuthSuiteService",
+      "func": "lib.application.service.corpAuthSuiteService",
+      "props": [
+        {
+          "name": "__suiteAccessTokenService__",
+          "ref": "mockSuiteAccessTokenService"
         }
       ]
     },
     {
       "id": "mockSuiteTicketRepository",
       "func": "test.mock.infrastructure.repository.suiteTicketRepository"
+    },
+    {
+      "id": "mockSuiteAccessTokenRepository",
+      "func": "test.mock.infrastructure.repository.suiteAccessTokenRepository"
+    },
+    {
+      "id": "mockSuiteAccessTokenService",
+      "func": "test.mock.application.service.suiteAccessTokenService"
     }
   ]
 }

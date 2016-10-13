@@ -3,8 +3,8 @@
   "scan": "lib",
   "beans": [
     {
-      "id": "",
-      "func": ""
+      "id": "corpAuthSuiteService",
+      "func": "test.mock.application.service.corpAuthSuiteService"
     }
   ]
 }

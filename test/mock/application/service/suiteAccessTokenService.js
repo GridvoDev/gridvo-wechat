@@ -11,4 +11,8 @@ Service.prototype.updateSuiteTicket = function (suiteTicketData, callback) {
     callback(null, true);
 };
 
+Service.prototype.getLatestSuiteAccessToken = function (suiteID, callback) {
+    callback(null, "suiteAccessToken");
+};
+
 module.exports = Service;
