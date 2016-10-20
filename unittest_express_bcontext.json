@@ -5,6 +5,10 @@
     {
       "id": "corpAuthSuiteService",
       "func": "test.mock.application.service.corpAuthSuiteService"
+    },
+    {
+      "id": "authCorpContactsService",
+      "func": "test.mock.application.service.authCorpContactsService"
     }
   ]
 }

@@ -4,16 +4,16 @@ var bearcat = require('bearcat');
 var should = require('should');
 var request = require('supertest');
 var express = require('express');
-var suiteAuthURLRouter = require('../../../../lib/express/routes/suite/suiteAuthURL.js');
+var userRouter = require('../../../../lib/express/routes/authCorp/user.js');
 
-describe('suiteAuthURLRouter use case test', function () {
+describe('userRouter use case test', function () {
     var app;
     var server;
     before(function (done) {
         async.waterfall([
             function (callback) {
                 app = express();
-                app.use('/suites', suiteAuthURLRouter);
+                app.use('/auth-corps', userRouter);
                 server = app.listen(3001, callback);
             },
             function (callback) {
@@ -32,11 +32,11 @@ describe('suiteAuthURLRouter use case test', function () {
             done();
         });
     });
-    describe('#get:/suites/:suiteID/suite-auth-url', function () {
-        context('get suite auth url', function () {
-            it('should response suite auth url', function (done) {
+    describe('#get:/auth-corps/:corpID/:suiteID/users', function () {
+        context('get auth corp suite users', function () {
+            it('should response err', function (done) {
                 request(server)
-                    .get(`/suites/suiteID/suite-auth-url`)
+                    .get(`/auth-corps/noCorpID/suiteID/users`)
                     .expect(200)
                     .expect('Content-Type', /json/)
                     .end(function (err, res) {
@@ -44,7 +44,24 @@ describe('suiteAuthURLRouter use case test', function () {
                             done(err);
                             return;
                         }
-                        res.body.suiteAuthUrl.should.be.eql("suite-auth-url");
+                        res.body.errcode.should.be.eql(400);
+                        res.body.errmsg.should.be.eql("fail");
+                        done();
+                    });
+            });
+            it('should response users', function (done) {
+                request(server)
+                    .get(`/auth-corps/corpID/suiteID/users`)
+                    .expect(200)
+                    .expect('Content-Type', /json/)
+                    .end(function (err, res) {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        res.body.errcode.should.be.eql(200);
+                        res.body.errmsg.should.be.eql("ok");
+                        res.body.users.length.should.be.eql(1);
                         done();
                     });
             });

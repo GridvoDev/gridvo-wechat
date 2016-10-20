@@ -53,6 +53,16 @@
       ]
     },
     {
+      "id": "authCorpContactsService",
+      "func": "lib.application.service.authCorpContactsService",
+      "props": [
+        {
+          "name": "__AuthCorpService__",
+          "ref": "mockAuthCorpService"
+        }
+      ]
+    },
+    {
       "id": "mockSuiteTicketRepository",
       "func": "test.mock.infrastructure.repository.suiteTicketRepository"
     },
@@ -63,6 +73,10 @@
     {
       "id": "mockSuiteAccessTokenService",
       "func": "test.mock.application.service.suiteAccessTokenService"
+    },
+    {
+      "id": "mockAuthCorpService",
+      "func": "test.mock.application.service.authCorpService"
     },
     {
       "id": "mockAuthCorpSuiteInfoRepository",
