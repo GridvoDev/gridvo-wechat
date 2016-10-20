@@ -15,4 +15,8 @@ Service.prototype.generateSuiteAuthURL = function (suiteID, preAuthCode, redirec
     callback(null, "suite-auth-url");
 };
 
+Service.prototype.authSuite = function (suiteID, authCode, callback) {
+    callback(null, null);
+};
+
 module.exports = Service;

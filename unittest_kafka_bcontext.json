@@ -7,14 +7,40 @@
       "func": "lib.kafka.consumer.suiteTicketArriveTopicConsumer",
       "props": [
         {
-          "name": "__suiteAccessTokenService__",
+          "name": "__SuiteAccessTokenService__",
           "ref": "mockSuiteAccessTokenService"
         }
       ]
     },
     {
+      "id": "corpCreateAuthTopicConsumer",
+      "func": "lib.kafka.consumer.corpCreateAuthTopicConsumer",
+      "props": [
+        {
+          "name": "__CorpAuthSuiteService__",
+          "ref": "mockCorpAuthSuiteService"
+        }
+      ]
+    },
+    {
+      "id": "corpCancelAuthTopicConsumer",
+      "func": "lib.kafka.consumer.corpCancelAuthTopicConsumer",
+      "props": [
+      ]
+    },
+    {
+      "id": "corpChangeAuthTopicConsumer",
+      "func": "lib.kafka.consumer.corpChangeAuthTopicConsumer",
+      "props": [
+      ]
+    },
+    {
       "id": "mockSuiteAccessTokenService",
       "func": "test.mock.application.service.suiteAccessTokenService"
+    },
+    {
+      "id": "mockCorpAuthSuiteService",
+      "func": "test.mock.application.service.corpAuthSuiteService"
     }
   ]
 }

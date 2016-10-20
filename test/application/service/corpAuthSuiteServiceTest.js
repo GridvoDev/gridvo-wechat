@@ -52,30 +52,50 @@ describe('corpAuthSuiteService use case test', function () {
     });
     describe('#authSuite(suiteID, authCode, callback)', function () {
         context('auth suite', function () {
-            it('reture auth corp suite info if all is ok ', function (done) {
+            it('reture true if all is ok ', function (done) {
                 var mockRequest = function (options, callback) {
-                    callback(null, {}, {
-                        access_token: "accessToken",
-                        permanent_code: "permanentCode",
-                        auth_corp_info: {
-                            corpid: "corpID"
-                        },
-                        auth_info: {
-                            agent: [{
-                                agentid: 1,
-                                appid: 1
-                            }]
-                        }
-                    });
+                    if (options.body.suite_id) {
+                        callback(null, {}, {
+                            access_token: "accessToken",
+                            permanent_code: "permanentCode",
+                            auth_corp_info: {
+                                corpid: "corpID"
+                            },
+                            auth_info: {
+                                agent: [{
+                                    agentid: 1,
+                                    appid: 1
+                                }]
+                            }
+                        });
+                    }
+                    else {
+                        callback(null, {}, {
+                            errcode: 0,
+                            errmsg: "ok"
+                        });
+                    }
                 };
                 muk(service, "__httpRequest__", mockRequest);
-                var suiteID = "suiteID";
+                var suiteID = "tj75d1122acf5ed4aa";
                 var authCode = "authCode";
-                service.authSuite(suiteID, authCode, function (err, authCorpSuiteInfoData) {
-                    authCorpSuiteInfoData.corpID.should.be.eql("corpID");
-                    authCorpSuiteInfoData.permanentCode.should.be.eql("permanentCode");
-                    authCorpSuiteInfoData.accessToken.should.be.eql("accessToken");
-                    authCorpSuiteInfoData.agents.should.be.eql({1: {agentid: 1}});
+                service.authSuite(suiteID, authCode, function (err, isSuccess) {
+                    isSuccess.should.be.eql(true);
+                    done();
+                });
+            });
+            after(function () {
+                muk.restore();
+            });
+        });
+    });
+    describe('#cancelAuthSuite(corpID, suiteID, callback)', function () {
+        context('cancel auth suite', function () {
+            it('reture true if all is ok ', function (done) {
+                var corpID = "wxf8b4f85f3a794e77";
+                var suiteID = "tj75d1122acf5ed4aa";
+                service.cancelAuthSuite(corpID, suiteID, function (err, isSuccess) {
+                    isSuccess.should.be.eql(true);
                     done();
                 });
             });

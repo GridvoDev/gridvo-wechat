@@ -21,8 +21,34 @@
       "func": "lib.application.service.corpAuthSuiteService",
       "props": [
         {
-          "name": "__suiteAccessTokenService__",
+          "name": "__SuiteAccessTokenService__",
           "ref": "mockSuiteAccessTokenService"
+        },
+        {
+          "name": "__AuthCorpSuiteInfoRepository__",
+          "ref": "mockAuthCorpSuiteInfoRepository"
+        },
+        {
+          "name": "__CorpAuthSmartgridSuiteTopicProducer__",
+          "ref": "mockTopicProducer"
+        },
+        {
+          "name": "__CorpCancelAuthSmartgridSuiteTopicProducer__",
+          "ref": "mockTopicProducer"
+        }
+      ]
+    },
+    {
+      "id": "authCorpService",
+      "func": "lib.application.service.authCorpService",
+      "props": [
+        {
+          "name": "__SuiteAccessTokenService__",
+          "ref": "mockSuiteAccessTokenService"
+        },
+        {
+          "name": "__AuthCorpSuiteInfoRepository__",
+          "ref": "mockAuthCorpSuiteInfoRepository"
         }
       ]
     },
@@ -37,6 +63,14 @@
     {
       "id": "mockSuiteAccessTokenService",
       "func": "test.mock.application.service.suiteAccessTokenService"
+    },
+    {
+      "id": "mockAuthCorpSuiteInfoRepository",
+      "func": "test.mock.infrastructure.repository.authCorpSuiteInfoRepository"
+    },
+    {
+      "id": "mockTopicProducer",
+      "func": "test.mock.infrastructure.message.producer.topicProducer"
     }
   ]
 }

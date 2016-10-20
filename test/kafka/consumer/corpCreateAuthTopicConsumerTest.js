@@ -5,7 +5,7 @@ var should = require('should');
 var muk = require('muk');
 var bearcat = require('bearcat');
 
-describe('suite ticket arrive topic consumer use case test', function () {
+describe('corpCreateAuthTopicConsumer use case test', function () {
     var consumer;
     var producer;
     var producerClient;
@@ -19,8 +19,8 @@ describe('suite ticket arrive topic consumer use case test', function () {
             producerClient = new kafka.Client(`${ZOOKEEPER_SERVICE_HOST}:${ZOOKEEPER_SERVICE_PORT}`);
             producer = new Producer(producerClient);
             producer.on('ready', function () {
-                producer.createTopics(['suite-ticket-arrive'], true, (err, data)=> {
-                    producerClient.refreshMetadata(['suite-ticket-arrive'], ()=> {
+                producer.createTopics(['corp-create-auth'], true, (err, data)=> {
+                    producerClient.refreshMetadata(['corp-create-auth'], ()=> {
                         done();
                     });
                 });
@@ -28,26 +28,26 @@ describe('suite ticket arrive topic consumer use case test', function () {
             producer.on('error', (err)=> {
                 done(err);
             });
-            consumer = bearcat.getBean('suiteTicketArriveTopicConsumer');
+            consumer = bearcat.getBean('corpCreateAuthTopicConsumer');
         });
     });
     describe('#startConsume(callback)', function () {
-        context('start consume suite-ticket-arrive topic', function () {
-            it('should call suiteAccessTokenService.updateSuiteTicket methods when consumer this topic', function (done) {
-                var mockSuiteAccessTokenService = {};
-                mockSuiteAccessTokenService.updateSuiteTicket = ()=> {
+        context('start consume corp-create-auth topic', function () {
+            it('should call corpAuthSuiteService.authSuite methods when consumer this topic', function (done) {
+                var mockCorpAuthSuiteService = {};
+                mockCorpAuthSuiteService.authSuite = ()=> {
                     done();
                 };
-                muk(consumer, "__SuiteAccessTokenService__", mockSuiteAccessTokenService);
+                muk(consumer, "__CorpAuthSuiteService__", mockCorpAuthSuiteService);
                 consumer.startConsume();
-                var suiteTicketData = {
+                var message = {
                     suiteID: "suiteID",
-                    ticket: "ticket",
-                    dateTime: new Date()
+                    authCode: "authCode",
+                    timestamp: 1403610513000
                 };
                 producer.send([{
-                    topic: "suite-ticket-arrive",
-                    messages: [JSON.stringify(suiteTicketData)]
+                    topic: "corp-create-auth",
+                    messages: [JSON.stringify(message)]
                 }], ()=> {
                 });
             });
