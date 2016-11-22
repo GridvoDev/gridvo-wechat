@@ -60,5 +60,4 @@ describe('corpCancelAuthTopicConsumer use case test', function () {
             done();
         });
     });
-})
-;
+});

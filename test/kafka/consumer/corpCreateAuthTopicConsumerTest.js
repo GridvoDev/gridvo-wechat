@@ -60,5 +60,4 @@ describe('corpCreateAuthTopicConsumer use case test', function () {
             done();
         });
     });
-})
-;
+});

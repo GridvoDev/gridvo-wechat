@@ -60,5 +60,4 @@ describe('suite ticket arrive topic consumer use case test', function () {
             done();
         });
     });
-})
-;
+});

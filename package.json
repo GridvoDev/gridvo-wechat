@@ -16,7 +16,7 @@
     "bearcat": "^0.4.29",
     "body-parser": "^1.15.2",
     "express": "^4.13.4",
-    "kafka-node": "^0.5.8",
+    "kafka-node": "^1.0.7",
     "mongodb": "^2.1.18",
     "request": "^2.73.0",
     "underscore": "^1.8.3"
