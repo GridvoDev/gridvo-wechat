@@ -1,42 +1,44 @@
 'use strict';
-var MongoClient = require('mongodb').MongoClient;
-var _ = require('underscore');
-var should = require('should');
-var SuiteTicket = require('../../../lib/domain/suiteTicket');
-var mongoDBSuiteTicketRepository = require('../../../lib/infrastructure/repository/mongoDBSuiteTicketRepository');
+const MongoClient = require('mongodb').MongoClient;
+const _ = require('underscore');
+const should = require('should');
+const SuiteTicket = require('../../../lib/domain/suiteTicket');
+const mongoDBSuiteTicketRepository = require('../../../lib/infrastructure/repository/mongoDBSuiteTicketRepository');
+const {createZipkinTracer} = require('gridvo-common-js');
 
-describe('suite ticket repository MongoDB use case test', function () {
-    var Repository;
-    before(function () {
-        Repository = new mongoDBSuiteTicketRepository();
+describe.only('suite ticket repository MongoDB use case test', ()=> {
+    let Repository;
+    before(()=> {
+        let tracer = createZipkinTracer({});
+        Repository = new mongoDBSuiteTicketRepository({tracer});
     });
-    describe('#saveSuiteTicket(suiteTicket, cb)', function () {
-        context('save a suite ticket', function () {
-            it('should return true if save success', function (done) {
-                var suiteTicket = new SuiteTicket({
+    describe('#saveSuiteTicket(suiteTicket, traceContext, cb)', ()=> {
+        context('save a suite ticket', ()=> {
+            it('should return true if save success', done=> {
+                let suiteTicket = new SuiteTicket({
                     suiteID: "suiteID",
                     ticket: "Ticket",
-                    dateTime: new Date()
+                    dateTime: (new Date()).getTime()
                 });
-                Repository.saveSuiteTicket(suiteTicket, function (err, isSuccess) {
+                Repository.saveSuiteTicket(suiteTicket, {}, (err, isSuccess)=> {
                     isSuccess.should.be.eql(true);
                     done();
                 });
             });
         });
     });
-    describe('#getSuiteTicketBySuiteID(suiteID, cb)', function () {
-        context('get a suite ticket for suite id', function () {
-            it('should return null if no this suite ticket', function (done) {
-                var suiteID = "noSuiteID";
-                Repository.getSuiteTicketBySuiteID(suiteID, function (err, suiteTicket) {
+    describe('#getSuiteTicketBySuiteID(suiteID,traceContext, cb)', ()=> {
+        context('get a suite ticket for suite id', ()=> {
+            it('should return null if no this suite ticket', done=> {
+                let suiteID = "noSuiteID";
+                Repository.getSuiteTicketBySuiteID(suiteID, {}, (err, suiteTicket)=> {
                     _.isNull(suiteTicket).should.be.eql(true);
                     done();
                 });
             });
-            it('should return suite ticket', function (done) {
-                var suiteID = "suiteID";
-                Repository.getSuiteTicketBySuiteID(suiteID, function (err, suiteTicket) {
+            it('should return suite ticket', done=> {
+                let suiteID = "suiteID";
+                Repository.getSuiteTicketBySuiteID(suiteID, {}, (err, suiteTicket)=> {
                     suiteTicket.suiteID.should.be.eql("suiteID");
                     suiteTicket.ticket.should.be.eql("Ticket");
                     done();
@@ -44,14 +46,13 @@ describe('suite ticket repository MongoDB use case test', function () {
             });
         });
     });
-    after(function (done) {
-        var MONGODB_SERVICE_HOST = process.env.MONGODB_SERVICE_HOST ? process.env.MONGODB_SERVICE_HOST : "127.0.0.1";
-        var MONGODB_SERVICE_PORT = process.env.MONGODB_SERVICE_PORT ? process.env.MONGODB_SERVICE_PORT : "27017";
-        MongoClient.connect(`mongodb://${MONGODB_SERVICE_HOST}:${MONGODB_SERVICE_PORT}/Wechat`, function (err, db) {
+    after(done=> {
+        let {MONGODB_SERVICE_HOST = "127.0.0.1", MONGODB_SERVICE_PORT = "27017"}= process.env;
+        MongoClient.connect(`mongodb://${MONGODB_SERVICE_HOST}:${MONGODB_SERVICE_PORT}/Wechat`, (err, db)=> {
             if (err) {
-                return;
+                done(err);
             }
-            db.collection('SuiteTicket').drop(function (err, response) {
+            db.collection('SuiteTicket').drop((err, response)=> {
                 db.close();
                 done();
             });
