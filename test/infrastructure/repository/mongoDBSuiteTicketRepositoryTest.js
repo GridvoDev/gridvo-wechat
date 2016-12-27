@@ -4,15 +4,13 @@ const _ = require('underscore');
 const should = require('should');
 const SuiteTicket = require('../../../lib/domain/suiteTicket');
 const mongoDBSuiteTicketRepository = require('../../../lib/infrastructure/repository/mongoDBSuiteTicketRepository');
-const {createZipkinTracer} = require('gridvo-common-js');
 
-describe.only('suite ticket repository MongoDB use case test', ()=> {
+describe('suite ticket repository MongoDB use case test', ()=> {
     let Repository;
     before(()=> {
-        let tracer = createZipkinTracer({});
-        Repository = new mongoDBSuiteTicketRepository({tracer});
+        Repository = new mongoDBSuiteTicketRepository();
     });
-    describe('#saveSuiteTicket(suiteTicket, traceContext, cb)', ()=> {
+    describe('#save(suiteTicket, traceContext, cb)', ()=> {
         context('save a suite ticket', ()=> {
             it('should return true if save success', done=> {
                 let suiteTicket = new SuiteTicket({
@@ -20,7 +18,10 @@ describe.only('suite ticket repository MongoDB use case test', ()=> {
                     ticket: "Ticket",
                     dateTime: (new Date()).getTime()
                 });
-                Repository.saveSuiteTicket(suiteTicket, {}, (err, isSuccess)=> {
+                Repository.save(suiteTicket, {}, (err, isSuccess)=> {
+                    if (err) {
+                        done(err);
+                    }
                     isSuccess.should.be.eql(true);
                     done();
                 });

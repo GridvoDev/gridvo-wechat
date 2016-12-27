@@ -1,20 +1,18 @@
 'use strict';
-var SuiteAccessToken = require('../../../../lib/domain/suiteAccessToken');
+const {SuiteAccessToken} = require('../../../../lib/domain');
 
-function Repository() {
+class Repository {
+    save(suiteAccessToken, traceContext, callback) {
+        callback(null, true);
+    }
 
-};
-
-Repository.prototype.saveSuiteAccessToken = function (suiteAccessToken, callback) {
-    callback(null, true);
-};
-
-Repository.prototype.getSuiteAccessTokenBySuiteID = function (suiteID, callback) {
-    callback(null, new SuiteAccessToken({
-        suiteID: "suiteID",
-        accessToken: "accessToken",
-        expire: new Date()
-    }));
-};
+    getSuiteAccessTokenBySuiteID(suiteID, traceContext, callback) {
+        callback(null, new SuiteAccessToken({
+            suiteID: "suiteID",
+            accessToken: "accessToken",
+            expire: new Date()
+        }));
+    }
+}
 
 module.exports = Repository;

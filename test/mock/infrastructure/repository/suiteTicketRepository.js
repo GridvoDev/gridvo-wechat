@@ -1,18 +1,17 @@
 'use strict';
-var SuiteTicket = require('../../../../lib/domain/suiteTicket');
+const {SuiteTicket} = require('../../../../lib/domain');
 
-function Repository() {
-};
+class Repository {
+    save(suiteTicket, traceContext, callback) {
+        callback(null, true);
+    }
 
-Repository.prototype.saveSuiteTicket = function (suiteTicket, callback) {
-    callback(null, true);
-};
-
-Repository.prototype.getSuiteTicketBySuiteID = function (suiteID, callback) {
-    callback(null, new SuiteTicket({
-        suiteID: "suiteID",
-        ticket: "Ticket"
-    }));
-};
+    getSuiteTicketBySuiteID(suiteID, traceContext, callback) {
+        callback(null, new SuiteTicket({
+            suiteID: "suiteID",
+            ticket: "Ticket"
+        }));
+    }
+}
 
 module.exports = Repository;
