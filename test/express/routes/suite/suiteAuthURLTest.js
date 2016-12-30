@@ -1,40 +1,47 @@
-var _ = require('underscore');
-var async = require('async');
-var bearcat = require('bearcat');
-var should = require('should');
-var request = require('supertest');
-var express = require('express');
-var suiteAuthURLRouter = require('../../../../lib/express/routes/suite/suiteAuthURL.js');
+const _ = require('underscore');
+const co = require('co');
+const should = require('should');
+const request = require('supertest');
+const express = require('express');
+const suiteAuthURLRouter = require('../../../../lib/express/routes/suite/suiteAuthURL.js');
+const MockCorpAuthSuiteService = require('../../../mock/application/service/corpAuthSuiteService');
+const {expressZipkinMiddleware, createZipkinTracer} = require("gridvo-common-js");
 
-describe('suiteAuthURLRouter use case test', function () {
-    var app;
-    var server;
-    before(function (done) {
-        async.waterfall([
-            function (callback) {
+describe('suiteAuthURLRouter use case test', ()=> {
+    let app;
+    let server;
+    before(done=> {
+        function setupExpress() {
+            return new Promise((resolve, reject)=> {
                 app = express();
+                app.use(expressZipkinMiddleware({
+                    tracer: createZipkinTracer({}),
+                    serviceName: 'test-service'
+                }));
                 app.use('/suites', suiteAuthURLRouter);
-                server = app.listen(3001, callback);
-            },
-            function (callback) {
-                var bearcatContextPath = require.resolve("../../../../unittest_express_bcontext.json");
-                bearcat.createApp([bearcatContextPath]);
-                bearcat.start(function () {
-                    app.set('bearcat', bearcat);
-                    callback(null);
+                let corpAuthSuiteService = new MockCorpAuthSuiteService();
+                app.set('corpAuthSuiteService', corpAuthSuiteService);
+                server = app.listen(3001, err=> {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
                 });
-            }
-        ], function (err) {
-            if (err) {
-                done(err);
-                return;
-            }
+            });
+        };
+        function* setup() {
+            yield setupExpress();
+        };
+        co(setup).then(()=> {
             done();
+        }).catch(err=> {
+            done(err);
         });
     });
-    describe('#get:/suites/:suiteID/suite-auth-url', function () {
-        context('get suite auth url', function () {
-            it('should response suite auth url', function (done) {
+    describe('#get:/suites/:suiteID/suite-auth-url', ()=> {
+        context('get suite auth url', ()=> {
+            it('should response suite auth url', done=> {
                 request(server)
                     .get(`/suites/suiteID/suite-auth-url`)
                     .expect(200)
@@ -50,16 +57,25 @@ describe('suiteAuthURLRouter use case test', function () {
             });
         });
     });
-    after(function (done) {
-        async.parallel([
-            function (callback) {
-                server.close(callback);
-            }], function (err, results) {
-            if (err) {
-                done(err);
-                return;
-            }
+    after(done=> {
+        function teardownExpress() {
+            return new Promise((resolve, reject)=> {
+                server.close(err=> {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
+                });
+            });
+        };
+        function* teardown() {
+            yield teardownExpress();
+        };
+        co(teardown).then(()=> {
             done();
+        }).catch(err=> {
+            done(err);
         });
     });
 });

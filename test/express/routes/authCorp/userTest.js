@@ -1,45 +1,52 @@
-var _ = require('underscore');
-var async = require('async');
-var bearcat = require('bearcat');
-var should = require('should');
-var request = require('supertest');
-var express = require('express');
-var userRouter = require('../../../../lib/express/routes/authCorp/user.js');
+const _ = require('underscore');
+const co = require('co');
+const should = require('should');
+const request = require('supertest');
+const express = require('express');
+const userRouter = require('../../../../lib/express/routes/authCorp/user.js');
+const MockAuthCorpContactsService = require('../../../mock/application/service/authCorpContactsService');
+const {expressZipkinMiddleware, createZipkinTracer} = require("gridvo-common-js");
 
-describe('userRouter use case test', function () {
-    var app;
-    var server;
-    before(function (done) {
-        async.waterfall([
-            function (callback) {
+describe('userRouter use case test', ()=> {
+    let app;
+    let server;
+    before(done=> {
+        function setupExpress() {
+            return new Promise((resolve, reject)=> {
                 app = express();
+                app.use(expressZipkinMiddleware({
+                    tracer: createZipkinTracer({}),
+                    serviceName: 'test-service'
+                }));
                 app.use('/auth-corps', userRouter);
-                server = app.listen(3001, callback);
-            },
-            function (callback) {
-                var bearcatContextPath = require.resolve("../../../../unittest_express_bcontext.json");
-                bearcat.createApp([bearcatContextPath]);
-                bearcat.start(function () {
-                    app.set('bearcat', bearcat);
-                    callback(null);
+                let authCorpContactsService = new MockAuthCorpContactsService();
+                app.set('authCorpContactsService', authCorpContactsService);
+                server = app.listen(3001, err=> {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
                 });
-            }
-        ], function (err) {
-            if (err) {
-                done(err);
-                return;
-            }
+            });
+        };
+        function* setup() {
+            yield setupExpress();
+        };
+        co(setup).then(()=> {
             done();
+        }).catch(err=> {
+            done(err);
         });
     });
-    describe('#get:/auth-corps/:corpID/:suiteID/users', function () {
-        context('get auth corp suite users', function () {
-            it('should response err', function (done) {
+    describe('#get:/auth-corps/:corpID/:suiteID/users', ()=> {
+        context('get auth corp suite users', ()=> {
+            it('should response err', done=> {
                 request(server)
                     .get(`/auth-corps/noCorpID/suiteID/users`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end(function (err, res) {
+                    .end((err, res)=> {
                         if (err) {
                             done(err);
                             return;
@@ -49,12 +56,12 @@ describe('userRouter use case test', function () {
                         done();
                     });
             });
-            it('should response users', function (done) {
+            it('should response users', done=> {
                 request(server)
                     .get(`/auth-corps/corpID/suiteID/users`)
                     .expect(200)
                     .expect('Content-Type', /json/)
-                    .end(function (err, res) {
+                    .end((err, res)=> {
                         if (err) {
                             done(err);
                             return;
@@ -67,16 +74,25 @@ describe('userRouter use case test', function () {
             });
         });
     });
-    after(function (done) {
-        async.parallel([
-            function (callback) {
-                server.close(callback);
-            }], function (err, results) {
-            if (err) {
-                done(err);
-                return;
-            }
+    after(done=> {
+        function teardownExpress() {
+            return new Promise((resolve, reject)=> {
+                server.close(err=> {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
+                });
+            });
+        };
+        function* teardown() {
+            yield teardownExpress();
+        };
+        co(teardown).then(()=> {
             done();
+        }).catch(err=> {
+            done(err);
         });
     });
 });

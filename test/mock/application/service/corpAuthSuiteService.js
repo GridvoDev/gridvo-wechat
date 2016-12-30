@@ -1,22 +1,24 @@
 'use strict';
 
-function Service() {
-};
-
-Service.prototype.getSuitePreAuthCode = function (suiteID, callback) {
-    if (!suiteID) {
-        callback(null, null);
-        return;
+class Service {
+    getSuitePreAuthCode(suiteID, traceContext, callback) {
+        if (!suiteID) {
+            callback(null, null);
+            return;
+        }
+        callback(null, "suitePreAuthCode");
     }
-    callback(null, "suitePreAuthCode");
-};
 
-Service.prototype.generateSuiteAuthURL = function (suiteID, preAuthCode, redirectURI, state, callback) {
-    callback(null, "suite-auth-url");
-};
+    generateSuiteAuthURLSync(suiteID, preAuthCode, redirectURI, state) {
+        if (!suiteID) {
+            return null;
+        }
+        return "suite-auth-url";
+    }
 
-Service.prototype.authSuite = function (suiteID, authCode, callback) {
-    callback(null, null);
-};
+    authSuite(suiteID, authCode, traceContext, callback) {
+        callback(null, true);
+    }
+}
 
 module.exports = Service;

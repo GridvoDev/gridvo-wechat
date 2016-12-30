@@ -16,7 +16,6 @@
     "express": "^4.13.4",
     "kafka-node": "^1.0.7",
     "mongodb": "^2.1.18",
-    "request": "^2.73.0",
     "rest": "^2.0.0",
     "underscore": "^1.8.3"
   },
