@@ -6,7 +6,7 @@ const should = require('should');
 const muk = require('muk');
 const MessageConsumer = require('../../lib/kafka/messageConsumer');
 
-describe('KafkaZipkinMessageConsumer(options) use case test', ()=> {
+describe('messageConsumer() use case test', ()=> {
     let messageConsumer;
     let client
     let producer;
@@ -71,7 +71,7 @@ describe('KafkaZipkinMessageConsumer(options) use case test', ()=> {
             done(err);
         });
     });
-    describe('#startConsume(callback)', ()=> {
+    describe('#startConsume()', ()=> {
         context('start consume message', ()=> {
             it('should call corpAuthSuiteService.cancelAuthSuite methods when consumer this topic', done=> {
                 var mockCorpAuthSuiteService = {};
