@@ -3,9 +3,10 @@ const kafka = require('kafka-node');
 const _ = require('underscore');
 const co = require('co');
 const should = require('should');
+const muk = require('muk');
 const MessageConsumer = require('../../lib/kafka/messageConsumer');
 
-describe.only('KafkaZipkinMessageConsumer(options) use case test', ()=> {
+describe('KafkaZipkinMessageConsumer(options) use case test', ()=> {
     let messageConsumer;
     let client
     let producer;
@@ -18,11 +19,17 @@ describe.only('KafkaZipkinMessageConsumer(options) use case test', ()=> {
                     "test-consumer-client");
                 producer = new kafka.Producer(client);
                 producer.on('ready', ()=> {
-                    producer.createTopics(["corp-cancel-auth", "corp-change-auth"], true, (err, data)=> {
+                    producer.createTopics(["corp-cancel-auth",
+                        "corp-change-auth",
+                        "corp-create-auth",
+                        "suite-ticket-arrive"], true, (err, data)=> {
                         if (err) {
                             reject(err)
                         }
-                        client.refreshMetadata(["corp-cancel-auth", "corp-change-auth"], (err)=> {
+                        client.refreshMetadata(["corp-cancel-auth",
+                            "corp-change-auth",
+                            "corp-create-auth",
+                            "suite-ticket-arrive"], (err)=> {
                             if (err) {
                                 reject(err)
                             }
@@ -71,7 +78,7 @@ describe.only('KafkaZipkinMessageConsumer(options) use case test', ()=> {
                 mockCorpAuthSuiteService.cancelAuthSuite = ()=> {
                     done();
                 };
-                muk(consumer, "_corpAuthSuiteService", mockCorpAuthSuiteService);
+                muk(messageConsumer, "_corpAuthSuiteService", mockCorpAuthSuiteService);
                 messageConsumer.startConsume();
             });
             after(done=> {

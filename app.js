@@ -1,48 +1,73 @@
 'use strict';
-var bearcat = require('bearcat');
-var kafka = require('kafka-node');
-var express = require('express');
-var userRouter = require('./lib/express/routes/authCorp/user');
-var suiteAuthURLRouter = require('./lib/express/routes/suite/suiteAuthURL');
+const kafka = require('kafka-node');
+const express = require('express');
+const {expressZipkinMiddleware} = require("gridvo-common-js");
+const {logger, tracer} = require('./lib/util');
+const {suiteAuthURLRouter, userRouter} = require('./lib/express');
+const {
+    createSuiteAccessTokenService,
+    createAuthCorpService,
+    createAuthCorpContactsService,
+    createCorpAuthSuiteService
+} = require('./lib/application');
+const {MessageConsumer} = require('./lib/kafka');
 
-var app;
-var bearcatContextPath = require.resolve("./production_bcontext.json");
-bearcat.createApp([bearcatContextPath]);
-bearcat.start(function () {
-    var ZOOKEEPER_SERVICE_HOST = process.env.ZOOKEEPER_SERVICE_HOST ? process.env.ZOOKEEPER_SERVICE_HOST : "127.0.0.1";
-    var ZOOKEEPER_SERVICE_PORT = process.env.ZOOKEEPER_SERVICE_PORT ? process.env.ZOOKEEPER_SERVICE_PORT : "2181";
-    var Producer = kafka.Producer;
-    var client = new kafka.Client(`${ZOOKEEPER_SERVICE_HOST}:${ZOOKEEPER_SERVICE_PORT}`);
-    var initProducer = new Producer(client);
-    initProducer.on('ready', function () {
-        initProducer.createTopics(["corp-auth-smartgrid-suite",
+let app;
+let {ZOOKEEPER_SERVICE_HOST = "127.0.0.1", ZOOKEEPER_SERVICE_PORT = "2181"} = process.env;
+let Producer = kafka.HighLevelProducer;
+let client = new kafka.Client(`${ZOOKEEPER_SERVICE_HOST}:${ZOOKEEPER_SERVICE_PORT}`);
+let initProducer = new Producer(client);
+initProducer.on('ready', function () {
+    initProducer.createTopics(["corp-auth-smartgrid-suite",
+        "corp-cancel-auth-smartgrid-suite",
+        "suite-ticket-arrive",
+        "corp-create-auth",
+        "corp-change-auth",
+        "corp-cancel-auth",
+        "zipkin"], true, (err)=> {
+        if (err) {
+            logger.error(err.message);
+            return;
+        }
+        client.refreshMetadata(["corp-auth-smartgrid-suite",
             "corp-cancel-auth-smartgrid-suite",
             "suite-ticket-arrive",
             "corp-create-auth",
             "corp-change-auth",
-            "corp-cancel-auth"], true, (err)=> {
-            if (err) {
-                console.log(err);
-                return;
-            }
-            client.refreshMetadata(["corp-auth-smartgrid-suite", "corp-cancel-auth-smartgrid-suite"], ()=> {
-                initProducer.close(()=> {
-                    console.log("gridvo-wechat service init topics success");
-                });
+            "corp-cancel-auth",
+            "zipkin"], ()=> {
+            initProducer.close(()=> {
+                logger.info("init kafka topics success");
+                let messageConsumer = new MessageConsumer();
+                messageConsumer.startConsume();
+                logger.info("gridvo-wechat start consuming topics");
             });
-            bearcat.getBean('suiteTicketArriveTopicConsumer').startConsume();
-            bearcat.getBean('corpCreateAuthTopicConsumer').startConsume();
-            bearcat.getBean('corpChangeAuthTopicConsumer').startConsume();
-            bearcat.getBean('corpCancelAuthTopicConsumer').startConsume();
         });
     });
-    initProducer.on('error', (err)=> {
-        console.log(err);
-    });
-    app = express();
-    app.use('/auth-corps', userRouter);
-    app.use('/suites', suiteAuthURLRouter);
-    app.set('bearcat', bearcat);
-    app.listen(3001);
-    console.log("gridvo-wechat service is starting...");
+});
+initProducer.on('error', (err)=> {
+    logger.error(err.message);
+});
+app = express();
+app.use(expressZipkinMiddleware({
+    tracer: tracer,
+    serviceName: 'gridvo-wechat'
+}));
+app.use('/suites', suiteAuthURLRouter);
+app.use('/auth-corps', userRouter);
+let suiteAccessTokenService = createSuiteAccessTokenService();
+app.set('suiteAccessTokenService', suiteAccessTokenService);
+let authCorpService = createAuthCorpService();
+app.set('authCorpService', authCorpService);
+let authCorpContactsService = createAuthCorpContactsService();
+app.set('authCorpContactsService', authCorpContactsService);
+let corpAuthSuiteService = createCorpAuthSuiteService();
+app.set('corpAuthSuiteService', corpAuthSuiteService);
+app.listen(3001, (err)=> {
+    if (err) {
+        logger.error(err.message);
+    }
+    else {
+        logger.info("gridvo-wechat express server is starting");
+    }
 });
