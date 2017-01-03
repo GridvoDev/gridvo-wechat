@@ -45,7 +45,7 @@ describe('messageConsumer() use case test', ()=> {
                                 }
                             };
                             producer.send([{
-                                topic: "corp-cancel-auth",
+                                topic: "suite-ticket-arrive",
                                 messages: [JSON.stringify(message)]
                             }], (err)=> {
                                 if (err) {
@@ -65,7 +65,7 @@ describe('messageConsumer() use case test', ()=> {
             yield setupKafka();
         };
         co(setup).then(()=> {
-            messageConsumer = new MessageConsumer();
+            messageConsumer = new MessageConsumer("test-gridvo-wechat");
             done();
         }).catch(err=> {
             done(err);
@@ -73,12 +73,12 @@ describe('messageConsumer() use case test', ()=> {
     });
     describe('#startConsume()', ()=> {
         context('start consume message', ()=> {
-            it('should call corpAuthSuiteService.cancelAuthSuite methods when consumer this topic', done=> {
-                var mockCorpAuthSuiteService = {};
-                mockCorpAuthSuiteService.cancelAuthSuite = ()=> {
+            it('should call suiteAccessTokenService.updateSuiteTicket methods when consumer this topic', done=> {
+                var mockSuiteAccessTokenService = {};
+                mockSuiteAccessTokenService.updateSuiteTicket = ()=> {
                     done();
                 };
-                muk(messageConsumer, "_corpAuthSuiteService", mockCorpAuthSuiteService);
+                muk(messageConsumer, "_suiteAccessTokenService", mockSuiteAccessTokenService);
                 messageConsumer.startConsume();
             });
             after(done=> {
