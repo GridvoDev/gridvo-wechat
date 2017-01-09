@@ -40,7 +40,7 @@ initProducer.on('ready', function () {
                 logger.info("init kafka topics success");
                 let messageConsumer = new MessageConsumer();
                 messageConsumer.startConsume();
-                logger.info("gridvo-wechat start consuming topics");
+                logger.info("start consuming topics");
             });
         });
     });
@@ -68,6 +68,6 @@ app.listen(3001, (err)=> {
         logger.error(err.message);
     }
     else {
-        logger.info("gridvo-wechat express server is starting");
+        logger.info("express server is starting");
     }
 });
