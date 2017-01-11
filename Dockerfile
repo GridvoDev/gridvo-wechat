@@ -2,6 +2,7 @@ FROM node:latest
 MAINTAINER linmadan <772181827@qq.com>
 COPY ./package.json /home/gridvo-wechat/
 WORKDIR /home/gridvo-wechat
+RUN ["npm","config","set","registry","http://registry.npm.taobao.org"]
 RUN ["npm","install","--save-dev","mocha@3.2.0"]
 RUN ["npm","install","--save-dev","muk@0.5.3"]
 RUN ["npm","install","--save-dev","should@11.1.1"]
