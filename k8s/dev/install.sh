@@ -22,8 +22,11 @@ if [ "$?" == "1" ];then
 	fi
 else
 	kubectl delete -f gridvo_wechat-deployment.yaml
-	while (  "$kubectl get pods | grep -q gridvo-wechat" == "1" )
+	kubectl get pods | grep -q gridvo-wechat
+	while (  "$?" == "1" )
 	do
+	kubectl get pods | grep -q gridvo-wechat
+	done
 	kubectl create -f gridvo_wechat-deployment.yaml --record
 	kubectl get pods | grep -q gridvo-wechat
 	if [ "$?" == "0" ];then
@@ -31,5 +34,4 @@ else
 	else
 		echo "gridvo_wechat-deployment update fail!"
 	fi
-	done
 fi
