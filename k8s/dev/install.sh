@@ -23,7 +23,7 @@ if [ "$?" == "1" ];then
 else
 	kubectl delete -f gridvo_wechat-deployment.yaml
 	kubectl get pods | grep -q gridvo-wechat
-	while (  "$?" == "1" )
+	while [ "$?" == "0" ]
 	do
 	kubectl get pods | grep -q gridvo-wechat
 	done
