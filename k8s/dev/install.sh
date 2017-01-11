@@ -27,7 +27,6 @@ else
 	do
 	kubectl get pods | grep -q gridvo-wechat
 	done
-	kubectl delete -f gridvo_wechat-deployment.yaml
 	kubectl create -f gridvo_wechat-deployment.yaml --record
 	kubectl get pods | grep -q gridvo-wechat
 	if [ "$?" == "0" ];then
