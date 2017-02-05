@@ -20,4 +20,5 @@ spec:
           value: "true"
         - name: IS_DEBUG
           value: "true"
-             
+        - name: SG_WECHAT_PORTAL_DOMAIN
+          value: "pascal.gridvo.com"
