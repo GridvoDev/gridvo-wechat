@@ -19,6 +19,14 @@ spec:
         ports:
         - containerPort: 3001
         env:
+        - name: MONGODB_SERVICE_HOST
+          value: mongodb
+        - name: MONGODB_SERVICE_PORT
+          value: 27017
+        - name: ZOOKEEPER_SERVICE_HOST
+          value: zookeeper
+        - name: ZOOKEEPER_SERVICE_PORT
+          value: 2181
         - name: ZK_TRACER_HTTP
           value: "true"
         - name: IS_DEBUG
