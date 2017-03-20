@@ -27,6 +27,10 @@ spec:
           value: "zookeeper"
         - name: ZOOKEEPER_SERVICE_PORT
           value: "2181"
+        - name: ZIPKIN_SERVICE_HOST
+          value: "zipkin"
+        - name: ZIPKIN_HTTP_TRANSPORT_PORT
+          value: "31011"
         - name: ZK_TRACER_HTTP
           value: "true"
         - name: IS_DEBUG
