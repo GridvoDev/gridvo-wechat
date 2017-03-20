@@ -30,7 +30,7 @@ spec:
         - name: ZIPKIN_SERVICE_HOST
           value: "zipkin"
         - name: ZIPKIN_HTTP_TRANSPORT_PORT
-          value: "31011"
+          value: "9411"
         - name: ZK_TRACER_HTTP
           value: "true"
         - name: IS_DEBUG
