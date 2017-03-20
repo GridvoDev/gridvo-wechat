@@ -14,7 +14,7 @@
   "dependencies": {
     "co": "^4.6.0",
     "express": "^4.14.1",
-    "gridvo-common-js": "0.0.22",
+    "gridvo-common-js": "0.0.23",
     "kafka-node": "^1.6.0",
     "mongodb": "^2.2.25",
     "rest": "^2.0.0",
